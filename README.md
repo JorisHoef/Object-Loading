@@ -1,0 +1,156 @@
+# JorisHoef Object Loading
+
+`com.jorishoef.object-loading` is a small Unity UPM package for loading AssetBundle-based object or scene content at runtime.
+
+The package owns only the generic loading pipeline:
+
+`ObjectLoadRequest -> source resolver -> downloader -> content loader -> instantiator -> diagnostics -> result/handle`
+
+It is designed for callers that already know the final AssetBundle URL.
+
+## What It Does
+
+- Loads a direct AssetBundle URL.
+- Adds optional request headers and optional bearer token auth.
+- Optionally appends a `platform` query, defaulting to `platform=webgl` unless overridden.
+- Downloads AssetBundle bytes with `UnityWebRequest`.
+- Loads bundles with `AssetBundle.LoadFromMemoryAsync`.
+- Instantiates bundled scenes first by default, or prefab/GameObject assets when no scene is present.
+- Applies optional parent, position, rotation, and scale to the loaded root container.
+- Returns a cleanup handle that destroys instantiated GameObjects and unloads the AssetBundle.
+- Reports diagnostics for assets, scenes, renderers, materials, shaders, and likely shader/material problems.
+
+## What It Does Not Do Yet
+
+- No glTF loading.
+- No Addressables integration.
+- No backend project/object/version lookup.
+- No API Helper dependency in the core package.
+- No material remapping, shader replacement, or render pipeline fixes.
+- No ServiceLocator.
+- No cache policy or storage quota management.
+
+Keep backend-specific source selection outside this core package. Pass the resolved URL, token, and headers into `ObjectLoadRequest`.
+
+## Install
+
+Add the package to a Unity project through Package Manager using this package folder or a Git URL, then import the optional sample from Package Manager.
+
+The package depends on Unity's Newtonsoft Json package:
+
+```json
+"com.unity.nuget.newtonsoft-json": "3.2.1"
+```
+
+## Direct URL Loading
+
+```csharp
+using System.Collections;
+using JorisHoef.ObjectLoading;
+using UnityEngine;
+
+public sealed class ExampleLoader : MonoBehaviour
+{
+    private readonly ObjectLoadingPipeline _pipeline = new ObjectLoadingPipeline();
+    private IObjectLoadHandle _handle;
+
+    public IEnumerator Load(string assetBundleUrl, Transform parent)
+    {
+        ObjectLoadRequest request = ObjectLoadRequest.FromUrl(assetBundleUrl);
+        request.Parent = parent;
+        request.DisplayName = "Loaded object";
+        request.LoadPreference = ObjectContentLoadPreference.Automatic;
+
+        ObjectLoadResult result = null;
+        yield return _pipeline.LoadAsync(request, value => result = value);
+
+        if (result.Succeeded)
+        {
+            _handle = result.Handle;
+            Debug.Log(result.Diagnostics.ToText());
+        }
+        else
+        {
+            Debug.LogError(result.Message);
+        }
+    }
+
+    public void Unload()
+    {
+        _handle?.Unload();
+        _handle = null;
+    }
+}
+```
+
+## Auth Headers
+
+Use the bearer token convenience when the server expects `Authorization: Bearer ...`.
+
+```csharp
+ObjectLoadRequest request = ObjectLoadRequest.FromUrl(url);
+request.BearerToken = accessToken;
+```
+
+Or pass explicit headers:
+
+```csharp
+request.AddHeader("Authorization", "Bearer " + accessToken);
+request.AddHeader("X-Custom-Header", "value");
+```
+
+If both are supplied, the explicit `Authorization` header wins. `ToDebugSnapshotJson()` redacts bearer tokens and sensitive headers.
+
+## Platform Query
+
+By default, direct URLs receive a `platform` query parameter when one is not already present:
+
+```text
+https://example.com/object.bundle -> https://example.com/object.bundle?platform=webgl
+```
+
+Override or disable this per request:
+
+```csharp
+request.PlatformOverride = "windows";
+request.AppendPlatformQuery = false;
+```
+
+## Cleanup
+
+The successful `ObjectLoadResult` includes an `IObjectLoadHandle`.
+
+Calling `Unload()`:
+
+- destroys instantiated root GameObjects,
+- unloads the AssetBundle with `AssetBundle.Unload(false)`,
+- is safe to call more than once.
+
+`ObjectLoadingPipeline.UnloadLast()` is also available for simple callers that want the pipeline to track the latest successful handle.
+
+## Diagnostics
+
+`DefaultObjectDiagnostics` reports:
+
+- loaded asset names,
+- bundled scene paths,
+- renderer count,
+- material count,
+- shader names,
+- active render pipeline name,
+- missing/error shader count,
+- likely pink/magenta material count,
+- warnings for common wrong platform or render pipeline symptoms.
+
+Diagnostics report facts and warnings only. They do not change materials or shaders.
+
+## Samples
+
+Import `Direct URL AssetBundle Loader` from Package Manager. The sample scene provides:
+
+- direct URL input,
+- optional bearer token input,
+- optional custom header input,
+- load/unload buttons,
+- status text,
+- diagnostics output.

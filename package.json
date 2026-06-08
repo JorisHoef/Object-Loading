@@ -1,0 +1,27 @@
+{
+  "name": "com.jorishoef.object-loading",
+  "displayName": "JorisHoef Object Loading",
+  "version": "0.1.0",
+  "unity": "2021.3",
+  "description": "Minimal runtime-safe object and scene loading pipeline for direct AssetBundle URLs.",
+  "keywords": [
+    "assetbundle",
+    "object-loading",
+    "scene-loading",
+    "webgl"
+  ],
+  "category": "Runtime",
+  "author": {
+    "name": "JorisHoef"
+  },
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  },
+  "samples": [
+    {
+      "displayName": "Direct URL AssetBundle Loader",
+      "description": "Simple runtime sample for loading and unloading an AssetBundle from a direct URL.",
+      "path": "Samples~/DirectUrlLoader"
+    }
+  ]
+}
