@@ -9,9 +9,11 @@ public sealed class DirectUrlAssetBundleLoaderSample : MonoBehaviour
     [SerializeField] private string headerName;
     [SerializeField] private string headerValue;
     [SerializeField] private ObjectContentLoadPreference loadPreference = ObjectContentLoadPreference.Automatic;
+    [SerializeField] private bool showDiagnosticsOverlay = true;
 
     private ObjectLoadingPipeline _pipeline;
     private IObjectLoadHandle _handle;
+    private ObjectLoadingDiagnosticsOverlay _diagnosticsOverlay;
     private Coroutine _loadRoutine;
     private Transform _objectRoot;
     private Vector2 _diagnosticsScroll;
@@ -22,6 +24,7 @@ public sealed class DirectUrlAssetBundleLoaderSample : MonoBehaviour
     {
         _pipeline = new ObjectLoadingPipeline();
         EnsureSceneObjects();
+        _diagnosticsOverlay = ObjectLoadingDiagnosticsOverlay.CreateIfEnabled(showDiagnosticsOverlay);
     }
 
     private void OnDestroy()
@@ -57,6 +60,20 @@ public sealed class DirectUrlAssetBundleLoaderSample : MonoBehaviour
             (int)loadPreference,
             new[] { "Automatic", "Scene first", "Prefab first" },
             3);
+
+        bool requestedOverlay = GUILayout.Toggle(showDiagnosticsOverlay, "Show Object Loading diagnostics overlay");
+        if (requestedOverlay != showDiagnosticsOverlay)
+        {
+            showDiagnosticsOverlay = requestedOverlay;
+            if (showDiagnosticsOverlay)
+            {
+                _diagnosticsOverlay = ObjectLoadingDiagnosticsOverlay.CreateIfEnabled(true);
+            }
+            else if (_diagnosticsOverlay != null)
+            {
+                _diagnosticsOverlay.SetVisible(false);
+            }
+        }
 
         GUILayout.BeginHorizontal();
         GUI.enabled = _loadRoutine == null;
@@ -121,10 +138,13 @@ public sealed class DirectUrlAssetBundleLoaderSample : MonoBehaviour
         request.DisplayName = "Sample Loaded Object";
         request.BearerToken = bearerToken;
         request.LoadPreference = loadPreference;
+        _diagnosticsOverlay = ObjectLoadingDiagnosticsOverlay.CreateIfEnabled(showDiagnosticsOverlay);
+        _diagnosticsOverlay?.Begin(request);
         request.Progress = progress =>
         {
             int percent = Mathf.RoundToInt(progress.Normalized * 100f);
             _status = progress.Stage + " " + percent + "% - " + progress.Message;
+            _diagnosticsOverlay?.RecordProgress(progress);
         };
 
         if (!string.IsNullOrWhiteSpace(headerName))
@@ -134,6 +154,7 @@ public sealed class DirectUrlAssetBundleLoaderSample : MonoBehaviour
 
         ObjectLoadResult result = null;
         yield return _pipeline.LoadAsync(request, value => result = value);
+        _diagnosticsOverlay?.RecordResult(result);
 
         if (result != null && result.Succeeded)
         {

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+- Added reusable runtime Object Loading diagnostics overlay.
+- Added diagnostics JSON snapshot/copy support.
+- Added package-level diagnostics logging helpers.
+- Updated the direct URL sample to demonstrate the reusable overlay.
+
 ## 0.3.0
 
 - Added structured load phases to progress callbacks.

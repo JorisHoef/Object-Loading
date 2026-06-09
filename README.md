@@ -23,6 +23,7 @@ It is designed for callers that already know the final AssetBundle URL.
 - Reports diagnostics for assets, scenes, renderers, materials, shaders, and likely shader/material problems.
 - Reports timing telemetry for download, bundle load, instantiation, total time, asset count, scene count, and cache status.
 - Reports structured loading phases through `ObjectLoadRequest.Progress`.
+- Provides an optional runtime diagnostics overlay and JSON copy/export for development builds.
 
 ## What It Does Not Do Yet
 
@@ -174,6 +175,20 @@ Diagnostics report facts and warnings only. They do not change materials or shad
 
 Progress updates include normalized progress, elapsed milliseconds when available, bytes received, and the latest `ObjectLoadTelemetry` snapshot.
 
+Use the optional runtime overlay when a project wants package-level developer visibility without building its own UI:
+
+```csharp
+ObjectLoadingDiagnosticsOverlay overlay = ObjectLoadingDiagnosticsOverlay.CreateIfEnabled(debugEnabled);
+overlay?.Begin(request);
+if (overlay != null)
+{
+    request.Progress = overlay.RecordProgress;
+}
+yield return pipeline.LoadAsync(request, result => overlay?.RecordResult(result));
+```
+
+The overlay shows only generic Object Loading state: phase, progress, elapsed time, download/bundle/instantiate timings, byte counts, asset/scene counts, renderer/material counts, and shader warning counts. It does not display request URLs, bearer tokens, backend IDs, or caller-specific API timings.
+
 ## Samples
 
 Import `Direct URL AssetBundle Loader` from Package Manager. The sample scene provides:
@@ -183,4 +198,5 @@ Import `Direct URL AssetBundle Loader` from Package Manager. The sample scene pr
 - optional custom header input,
 - load/unload buttons,
 - status text,
-- diagnostics output.
+- diagnostics output,
+- reusable Object Loading diagnostics overlay with JSON copy.

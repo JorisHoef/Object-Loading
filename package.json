@@ -1,7 +1,7 @@
 {
   "name": "com.jorishoef.object-loading",
   "displayName": "JorisHoef Object Loading",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "unity": "2021.3",
   "description": "Minimal runtime-safe object and scene loading pipeline for direct AssetBundle URLs.",
   "keywords": [
@@ -20,7 +20,7 @@
   "samples": [
     {
       "displayName": "Direct URL AssetBundle Loader",
-      "description": "Simple runtime sample for loading and unloading an AssetBundle from a direct URL.",
+      "description": "Simple runtime sample for loading and unloading an AssetBundle from a direct URL with the reusable diagnostics overlay.",
       "path": "Samples~/DirectUrlLoader"
     }
   ]
