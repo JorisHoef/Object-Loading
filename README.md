@@ -4,21 +4,24 @@
 
 The package owns only the generic loading pipeline:
 
-`ObjectLoadRequest -> source resolver -> downloader -> content loader -> instantiator -> diagnostics -> result/handle`
+`ObjectLoadRequest -> source resolver -> source content loader -> instantiator -> diagnostics -> result/handle`
 
 It is designed for callers that already know the final AssetBundle URL.
 
 ## What It Does
 
-- Loads a direct AssetBundle URL.
+- Loads direct AssetBundle URLs, local AssetBundle files, or explicit raw AssetBundle bytes.
 - Adds optional request headers and optional bearer token auth.
 - Optionally appends a `platform` query, defaulting to `platform=webgl` unless overridden.
-- Downloads AssetBundle bytes with `UnityWebRequest`.
-- Loads bundles with `AssetBundle.LoadFromMemoryAsync`.
+- Loads remote bundles with `UnityWebRequestAssetBundle.GetAssetBundle`.
+- Loads local files with `AssetBundle.LoadFromFileAsync`.
+- Keeps `AssetBundle.LoadFromMemoryAsync` available for explicit raw-byte workflows.
+- Supports cache metadata for remote AssetBundle requests.
 - Instantiates bundled scenes first by default, or prefab/GameObject assets when no scene is present.
 - Applies optional parent, position, rotation, and scale to the loaded root container.
 - Returns a cleanup handle that destroys instantiated GameObjects and unloads the AssetBundle.
 - Reports diagnostics for assets, scenes, renderers, materials, shaders, and likely shader/material problems.
+- Reports timing telemetry for download, bundle load, instantiation, total time, asset count, scene count, and cache status.
 
 ## What It Does Not Do Yet
 
@@ -28,7 +31,7 @@ It is designed for callers that already know the final AssetBundle URL.
 - No API Helper dependency in the core package.
 - No material remapping, shader replacement, or render pipeline fixes.
 - No ServiceLocator.
-- No cache policy or storage quota management.
+- No cache eviction policy or storage quota management.
 
 Keep backend-specific source selection outside this core package. Pass the resolved URL, token, and headers into `ObjectLoadRequest`.
 
@@ -100,6 +103,19 @@ request.AddHeader("X-Custom-Header", "value");
 ```
 
 If both are supplied, the explicit `Authorization` header wins. `ToDebugSnapshotJson()` redacts bearer tokens and sensitive headers.
+
+## Cache Metadata
+
+Remote loads can request Unity AssetBundle caching when a stable version/hash is available:
+
+```csharp
+request.CacheMode = ObjectLoadCacheMode.UseUnityCache;
+request.CacheKey = "project-832-model-497";
+request.CacheHash = "0123456789abcdef0123456789abcdef";
+request.Crc = 0;
+```
+
+If no cache metadata is supplied, remote URLs still use `UnityWebRequestAssetBundle` without forcing a managed `byte[]`.
 
 ## Platform Query
 

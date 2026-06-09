@@ -6,7 +6,9 @@ namespace JorisHoef.ObjectLoading
 {
     public enum ObjectSourceType
     {
-        DirectUrl = 0
+        DirectUrl = 0,
+        LocalFile = 1,
+        RawBytes = 2
     }
 
     public enum ObjectContentLoadPreference
@@ -14,6 +16,13 @@ namespace JorisHoef.ObjectLoading
         Automatic = 0,
         SceneFirst = 1,
         PrefabFirst = 2
+    }
+
+    public enum ObjectLoadCacheMode
+    {
+        Default = 0,
+        Disabled = 1,
+        UseUnityCache = 2
     }
 
     public enum ObjectLoadErrorCode
@@ -48,9 +57,31 @@ namespace JorisHoef.ObjectLoading
         [JsonProperty("url")]
         public string Url { get; set; }
 
+        [JsonProperty("path")]
+        public string Path { get; set; }
+
+        [JsonIgnore]
+        public byte[] Bytes { get; set; }
+
         public static ObjectSource DirectUrl(string url)
         {
             return new ObjectSource(ObjectSourceType.DirectUrl, url);
+        }
+
+        public static ObjectSource LocalFile(string path)
+        {
+            return new ObjectSource(ObjectSourceType.LocalFile, null)
+            {
+                Path = path
+            };
+        }
+
+        public static ObjectSource RawBytes(byte[] bytes)
+        {
+            return new ObjectSource(ObjectSourceType.RawBytes, null)
+            {
+                Bytes = bytes
+            };
         }
     }
 
@@ -128,19 +159,24 @@ namespace JorisHoef.ObjectLoading
         [JsonProperty("diagnostics")]
         public ObjectDiagnosticsReport Diagnostics { get; private set; }
 
+        [JsonProperty("telemetry")]
+        public ObjectLoadTelemetry Telemetry { get; private set; }
+
         [JsonIgnore]
         public IObjectLoadHandle Handle { get; private set; }
 
         public static ObjectLoadResult Success(string message,
                                               IObjectLoadHandle handle,
-                                              ObjectDiagnosticsReport diagnostics = null)
+                                              ObjectDiagnosticsReport diagnostics = null,
+                                              ObjectLoadTelemetry telemetry = null)
         {
             return new ObjectLoadResult
             {
                 Succeeded = true,
                 Message = string.IsNullOrWhiteSpace(message) ? "Object loaded." : message,
                 Handle = handle,
-                Diagnostics = diagnostics ?? ObjectDiagnosticsReport.Empty()
+                Diagnostics = diagnostics ?? ObjectDiagnosticsReport.Empty(),
+                Telemetry = telemetry ?? ObjectLoadTelemetry.Empty()
             };
         }
 
@@ -156,8 +192,59 @@ namespace JorisHoef.ObjectLoading
                 Succeeded = false,
                 Message = error != null ? error.Message : "Object loading failed.",
                 Error = error ?? ObjectLoadError.Create(ObjectLoadErrorCode.Unknown, "Object loading failed."),
-                Diagnostics = ObjectDiagnosticsReport.Empty()
+                Diagnostics = ObjectDiagnosticsReport.Empty(),
+                Telemetry = ObjectLoadTelemetry.Empty()
             };
+        }
+    }
+
+    public sealed class ObjectLoadTelemetry
+    {
+        [JsonProperty("load_strategy")]
+        public string LoadStrategy { get; set; }
+
+        [JsonProperty("download_time_ms")]
+        public long DownloadTimeMs { get; set; }
+
+        [JsonProperty("bundle_load_time_ms")]
+        public long BundleLoadTimeMs { get; set; }
+
+        [JsonProperty("instantiate_time_ms")]
+        public long InstantiateTimeMs { get; set; }
+
+        [JsonProperty("total_time_ms")]
+        public long TotalTimeMs { get; set; }
+
+        [JsonProperty("bytes_received")]
+        public long BytesReceived { get; set; }
+
+        [JsonProperty("asset_count")]
+        public int AssetCount { get; set; }
+
+        [JsonProperty("scene_count")]
+        public int SceneCount { get; set; }
+
+        [JsonProperty("cache_mode")]
+        public ObjectLoadCacheMode CacheMode { get; set; }
+
+        [JsonProperty("cache_key")]
+        public string CacheKey { get; set; }
+
+        [JsonProperty("cache_hash")]
+        public string CacheHash { get; set; }
+
+        [JsonProperty("cache_version")]
+        public uint? CacheVersion { get; set; }
+
+        [JsonProperty("crc")]
+        public uint Crc { get; set; }
+
+        [JsonProperty("cache_status")]
+        public string CacheStatus { get; set; }
+
+        public static ObjectLoadTelemetry Empty()
+        {
+            return new ObjectLoadTelemetry();
         }
     }
 
@@ -221,14 +308,17 @@ namespace JorisHoef.ObjectLoading
     {
         public bool Succeeded { get; private set; }
         public AssetBundleContent Content { get; private set; }
+        public ObjectLoadTelemetry Telemetry { get; private set; }
         public ObjectLoadError Error { get; private set; }
 
-        public static ObjectContentLoadResult Success(AssetBundleContent content)
+        public static ObjectContentLoadResult Success(AssetBundleContent content,
+                                                      ObjectLoadTelemetry telemetry = null)
         {
             return new ObjectContentLoadResult
             {
                 Succeeded = true,
-                Content = content
+                Content = content,
+                Telemetry = telemetry ?? ObjectLoadTelemetry.Empty()
             };
         }
 

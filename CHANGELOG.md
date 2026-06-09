@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0
+
+- Replaced the default byte-array AssetBundle path with source-centric loading.
+- Added remote URL loading through `UnityWebRequestAssetBundle.GetAssetBundle`.
+- Added local file loading through `AssetBundle.LoadFromFileAsync`.
+- Preserved raw-byte loading through `AssetBundle.LoadFromMemoryAsync`.
+- Added cache metadata fields to `ObjectLoadRequest`.
+- Added timing and cache telemetry to `ObjectLoadResult`.
+
 ## 0.1.0
 
 - Added initial UPM package metadata.

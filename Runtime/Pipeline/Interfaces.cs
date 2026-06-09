@@ -22,6 +22,13 @@ namespace JorisHoef.ObjectLoading
                               Action<ObjectContentLoadResult> onCompleted);
     }
 
+    public interface IObjectSourceContentLoader
+    {
+        IEnumerator LoadAsync(ObjectSource source,
+                              ObjectLoadRequest request,
+                              Action<ObjectContentLoadResult> onCompleted);
+    }
+
     public interface IObjectInstantiator
     {
         IEnumerator InstantiateAsync(AssetBundleContent content,

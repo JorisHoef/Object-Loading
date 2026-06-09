@@ -18,6 +18,7 @@ namespace JorisHoef.ObjectLoading
             PlatformQueryParameter = "platform";
             LoadPreference = ObjectContentLoadPreference.Automatic;
             TimeoutSeconds = 120;
+            CacheMode = ObjectLoadCacheMode.Default;
         }
 
         [JsonProperty("source")]
@@ -46,6 +47,21 @@ namespace JorisHoef.ObjectLoading
 
         [JsonProperty("timeout_seconds")]
         public int TimeoutSeconds { get; set; }
+
+        [JsonProperty("cache_mode")]
+        public ObjectLoadCacheMode CacheMode { get; set; }
+
+        [JsonProperty("cache_key")]
+        public string CacheKey { get; set; }
+
+        [JsonProperty("cache_hash")]
+        public string CacheHash { get; set; }
+
+        [JsonProperty("cache_version")]
+        public uint? CacheVersion { get; set; }
+
+        [JsonProperty("crc")]
+        public uint Crc { get; set; }
 
         [JsonIgnore]
         public Transform Parent { get; set; }
@@ -137,7 +153,12 @@ namespace JorisHoef.ObjectLoading
                 PlatformOverride = PlatformOverride,
                 LoadPreference = LoadPreference,
                 DisplayName = DisplayName,
-                TimeoutSeconds = TimeoutSeconds
+                TimeoutSeconds = TimeoutSeconds,
+                CacheMode = CacheMode,
+                CacheKey = CacheKey,
+                CacheHash = CacheHash,
+                CacheVersion = CacheVersion,
+                Crc = Crc
             };
         }
 
@@ -214,5 +235,20 @@ namespace JorisHoef.ObjectLoading
 
         [JsonProperty("timeout_seconds")]
         public int TimeoutSeconds { get; set; }
+
+        [JsonProperty("cache_mode")]
+        public ObjectLoadCacheMode CacheMode { get; set; }
+
+        [JsonProperty("cache_key")]
+        public string CacheKey { get; set; }
+
+        [JsonProperty("cache_hash")]
+        public string CacheHash { get; set; }
+
+        [JsonProperty("cache_version")]
+        public uint? CacheVersion { get; set; }
+
+        [JsonProperty("crc")]
+        public uint Crc { get; set; }
     }
 }
