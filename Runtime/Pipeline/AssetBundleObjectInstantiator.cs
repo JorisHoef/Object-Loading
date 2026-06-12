@@ -5,7 +5,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace JorisHoef.ObjectLoading
+namespace Deucarian.ObjectLoading
 {
     public sealed class AssetBundleObjectInstantiator : IObjectInstantiator
     {

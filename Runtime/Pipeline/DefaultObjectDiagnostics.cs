@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace JorisHoef.ObjectLoading
+namespace Deucarian.ObjectLoading
 {
     public sealed class DefaultObjectDiagnostics : IObjectDiagnostics
     {

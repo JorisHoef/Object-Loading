@@ -1,5 +1,5 @@
 using System.Collections;
-using JorisHoef.ObjectLoading;
+using Deucarian.ObjectLoading;
 using UnityEngine;
 
 public sealed class DirectUrlAssetBundleLoaderSample : MonoBehaviour

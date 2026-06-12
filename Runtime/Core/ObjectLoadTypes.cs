@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace JorisHoef.ObjectLoading
+namespace Deucarian.ObjectLoading
 {
     public enum ObjectSourceType
     {

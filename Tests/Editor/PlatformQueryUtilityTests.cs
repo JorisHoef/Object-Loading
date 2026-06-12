@@ -1,7 +1,7 @@
 using System.Collections;
 using NUnit.Framework;
 
-namespace JorisHoef.ObjectLoading.Tests
+namespace Deucarian.ObjectLoading.Tests
 {
     public sealed class PlatformQueryUtilityTests
     {

@@ -1,6 +1,6 @@
 {
-  "name": "JorisHoef.ObjectLoading.Runtime",
-  "rootNamespace": "JorisHoef.ObjectLoading",
+  "name": "Deucarian.ObjectLoading",
+  "rootNamespace": "Deucarian.ObjectLoading",
   "references": [
     "Newtonsoft.Json"
   ],

@@ -1,6 +1,6 @@
-# JorisHoef Object Loading
+# Deucarian Object Loading
 
-`com.jorishoef.object-loading` is a small Unity UPM package for loading AssetBundle-based object or scene content at runtime.
+`com.deucarian.object-loading` is a small Unity UPM package for loading AssetBundle-based object or scene content at runtime.
 
 The package owns only the generic loading pipeline:
 
@@ -25,7 +25,7 @@ It is designed for callers that already know the final AssetBundle URL.
 - No glTF loading.
 - No Addressables integration.
 - No backend project/object/version lookup.
-- No API Helper dependency in the core package.
+- No API dependency in the core package.
 - No material remapping, shader replacement, or render pipeline fixes.
 - No ServiceLocator.
 - No cache policy or storage quota management.
@@ -46,7 +46,7 @@ The package depends on Unity's Newtonsoft Json package:
 
 ```csharp
 using System.Collections;
-using JorisHoef.ObjectLoading;
+using Deucarian.ObjectLoading;
 using UnityEngine;
 
 public sealed class ExampleLoader : MonoBehaviour

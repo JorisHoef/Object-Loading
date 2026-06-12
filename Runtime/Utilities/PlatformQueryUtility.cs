@@ -1,6 +1,6 @@
 using System;
 
-namespace JorisHoef.ObjectLoading
+namespace Deucarian.ObjectLoading
 {
     public static class PlatformQueryUtility
     {

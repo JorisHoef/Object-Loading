@@ -1,8 +1,8 @@
 {
-  "name": "JorisHoef.ObjectLoading.Tests",
-  "rootNamespace": "JorisHoef.ObjectLoading.Tests",
+  "name": "Deucarian.ObjectLoading.Tests",
+  "rootNamespace": "Deucarian.ObjectLoading.Tests",
   "references": [
-    "JorisHoef.ObjectLoading.Runtime"
+    "Deucarian.ObjectLoading"
   ],
   "includePlatforms": [
     "Editor"

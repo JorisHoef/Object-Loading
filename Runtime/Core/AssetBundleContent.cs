@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace JorisHoef.ObjectLoading
+namespace Deucarian.ObjectLoading
 {
     public sealed class AssetBundleContent : IDisposable
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace JorisHoef.ObjectLoading
+namespace Deucarian.ObjectLoading
 {
     internal static class UnityObjectUtility
     {

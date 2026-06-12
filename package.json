@@ -1,6 +1,6 @@
 {
-  "name": "com.jorishoef.object-loading",
-  "displayName": "JorisHoef Object Loading",
+  "name": "com.deucarian.object-loading",
+  "displayName": "Deucarian Object Loading",
   "version": "0.1.0",
   "unity": "2021.3",
   "description": "Minimal runtime-safe object and scene loading pipeline for direct AssetBundle URLs.",
@@ -12,7 +12,7 @@
   ],
   "category": "Runtime",
   "author": {
-    "name": "JorisHoef"
+    "name": "Deucarian"
   },
   "dependencies": {
     "com.unity.nuget.newtonsoft-json": "3.2.1"

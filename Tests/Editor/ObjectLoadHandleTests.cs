@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 
-namespace JorisHoef.ObjectLoading.Tests
+namespace Deucarian.ObjectLoading.Tests
 {
     public sealed class ObjectLoadHandleTests
     {

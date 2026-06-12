@@ -1,4 +1,4 @@
-namespace JorisHoef.ObjectLoading
+namespace Deucarian.ObjectLoading
 {
     public static class ObjectLoadingPlatform
     {
